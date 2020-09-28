@@ -1,0 +1,45 @@
+2020-09-28 21:43:42,164 - mmdet - INFO - load checkpoint from ../weights/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
+2020-09-28 21:43:42,367 - mmdet - WARNING - The model and loaded state dict do not match exactly
+
+size mismatch for roi_head.bbox_head.fc_cls.weight: copying a param with shape torch.Size([81, 1024]) from checkpoint, the shape in current model is torch.Size([4, 1024]).
+size mismatch for roi_head.bbox_head.fc_cls.bias: copying a param with shape torch.Size([81]) from checkpoint, the shape in current model is torch.Size([4]).
+size mismatch for roi_head.bbox_head.fc_reg.weight: copying a param with shape torch.Size([320, 1024]) from checkpoint, the shape in current model is torch.Size([12, 1024]).
+size mismatch for roi_head.bbox_head.fc_reg.bias: copying a param with shape torch.Size([320]) from checkpoint, the shape in current model is torch.Size([12]).
+2020-09-28 21:43:42,370 - mmdet - INFO - Start running, host: zxq@zxq-desktop, work_dir: /home/zxq/PycharmProjects/mmdetection/work_dir
+2020-09-28 21:43:42,370 - mmdet - INFO - workflow: [('train', 1)], max: 12 epochs
+2020-09-28 21:43:47,923 - mmdet - INFO - Epoch [1][10/25]	lr: 2.500e-03, eta: 0:02:39, time: 0.551, data_time: 0.227, memory: 2229, loss_rpn_cls: 0.0289, loss_rpn_bbox: 0.0178, loss_cls: 0.6211, acc: 82.0703, loss_bbox: 0.3944, loss: 1.0622
+2020-09-28 21:43:50,753 - mmdet - INFO - Epoch [1][20/25]	lr: 2.500e-03, eta: 0:01:56, time: 0.283, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0223, loss_rpn_bbox: 0.0123, loss_cls: 0.2228, acc: 92.2754, loss_bbox: 0.3241, loss: 0.5815
+2020-09-28 21:43:57,296 - mmdet - INFO - Epoch [2][10/25]	lr: 2.500e-03, eta: 0:01:41, time: 0.505, data_time: 0.225, memory: 2229, loss_rpn_cls: 0.0160, loss_rpn_bbox: 0.0155, loss_cls: 0.1674, acc: 94.5215, loss_bbox: 0.3270, loss: 0.5259
+2020-09-28 21:44:00,202 - mmdet - INFO - Epoch [2][20/25]	lr: 2.500e-03, eta: 0:01:32, time: 0.291, data_time: 0.012, memory: 2229, loss_rpn_cls: 0.0116, loss_rpn_bbox: 0.0126, loss_cls: 0.1422, acc: 94.6191, loss_bbox: 0.2317, loss: 0.3981
+2020-09-28 21:44:06,736 - mmdet - INFO - Epoch [3][10/25]	lr: 2.500e-03, eta: 0:01:25, time: 0.504, data_time: 0.226, memory: 2229, loss_rpn_cls: 0.0052, loss_rpn_bbox: 0.0111, loss_cls: 0.0979, acc: 96.2012, loss_bbox: 0.1659, loss: 0.2801
+2020-09-28 21:44:09,717 - mmdet - INFO - Epoch [3][20/25]	lr: 2.500e-03, eta: 0:01:19, time: 0.297, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0095, loss_rpn_bbox: 0.0124, loss_cls: 0.1478, acc: 94.5117, loss_bbox: 0.2574, loss: 0.4270
+2020-09-28 21:44:16,485 - mmdet - INFO - Epoch [4][10/25]	lr: 2.500e-03, eta: 0:01:14, time: 0.514, data_time: 0.227, memory: 2229, loss_rpn_cls: 0.0073, loss_rpn_bbox: 0.0153, loss_cls: 0.1340, acc: 94.7852, loss_bbox: 0.2287, loss: 0.3853
+2020-09-28 21:44:19,433 - mmdet - INFO - Epoch [4][20/25]	lr: 2.500e-03, eta: 0:01:09, time: 0.296, data_time: 0.014, memory: 2229, loss_rpn_cls: 0.0044, loss_rpn_bbox: 0.0123, loss_cls: 0.1271, acc: 95.3418, loss_bbox: 0.2135, loss: 0.3572
+2020-09-28 21:44:26,056 - mmdet - INFO - Epoch [5][10/25]	lr: 2.500e-03, eta: 0:01:04, time: 0.513, data_time: 0.227, memory: 2229, loss_rpn_cls: 0.0041, loss_rpn_bbox: 0.0106, loss_cls: 0.1126, acc: 95.6445, loss_bbox: 0.1957, loss: 0.3230
+2020-09-28 21:44:28,951 - mmdet - INFO - Epoch [5][20/25]	lr: 2.500e-03, eta: 0:01:00, time: 0.290, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0058, loss_rpn_bbox: 0.0119, loss_cls: 0.1078, acc: 95.9863, loss_bbox: 0.1736, loss: 0.2991
+2020-09-28 21:44:35,664 - mmdet - INFO - Epoch [6][10/25]	lr: 2.500e-03, eta: 0:00:55, time: 0.520, data_time: 0.228, memory: 2229, loss_rpn_cls: 0.0029, loss_rpn_bbox: 0.0094, loss_cls: 0.0846, acc: 96.6992, loss_bbox: 0.1687, loss: 0.2656
+2020-09-28 21:44:38,544 - mmdet - INFO - Epoch [6][20/25]	lr: 2.500e-03, eta: 0:00:51, time: 0.288, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0035, loss_rpn_bbox: 0.0102, loss_cls: 0.0930, acc: 96.5332, loss_bbox: 0.1735, loss: 0.2801
+2020-09-28 21:44:45,230 - mmdet - INFO - Epoch [7][10/25]	lr: 2.500e-03, eta: 0:00:46, time: 0.517, data_time: 0.227, memory: 2229, loss_rpn_cls: 0.0016, loss_rpn_bbox: 0.0100, loss_cls: 0.0808, acc: 97.3535, loss_bbox: 0.1564, loss: 0.2489
+2020-09-28 21:44:48,203 - mmdet - INFO - Epoch [7][20/25]	lr: 2.500e-03, eta: 0:00:43, time: 0.297, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0017, loss_rpn_bbox: 0.0119, loss_cls: 0.0956, acc: 96.3477, loss_bbox: 0.1782, loss: 0.2875
+2020-09-28 21:44:54,944 - mmdet - INFO - Epoch [8][10/25]	lr: 2.500e-03, eta: 0:00:38, time: 0.521, data_time: 0.227, memory: 2229, loss_rpn_cls: 0.0023, loss_rpn_bbox: 0.0086, loss_cls: 0.0774, acc: 97.0312, loss_bbox: 0.1360, loss: 0.2242
+2020-09-28 21:44:57,830 - mmdet - INFO - Epoch [8][20/25]	lr: 2.500e-03, eta: 0:00:34, time: 0.288, data_time: 0.012, memory: 2229, loss_rpn_cls: 0.0016, loss_rpn_bbox: 0.0092, loss_cls: 0.0856, acc: 96.8066, loss_bbox: 0.1683, loss: 0.2646
+2020-09-28 21:45:04,401 - mmdet - INFO - Epoch [9][10/25]	lr: 2.500e-04, eta: 0:00:29, time: 0.506, data_time: 0.226, memory: 2229, loss_rpn_cls: 0.0023, loss_rpn_bbox: 0.0091, loss_cls: 0.0704, acc: 97.4414, loss_bbox: 0.1384, loss: 0.2202
+2020-09-28 21:45:07,319 - mmdet - INFO - Epoch [9][20/25]	lr: 2.500e-04, eta: 0:00:26, time: 0.291, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0019, loss_rpn_bbox: 0.0070, loss_cls: 0.0654, acc: 97.5488, loss_bbox: 0.1242, loss: 0.1985
+2020-09-28 21:45:14,006 - mmdet - INFO - Epoch [10][10/25]	lr: 2.500e-04, eta: 0:00:21, time: 0.514, data_time: 0.226, memory: 2229, loss_rpn_cls: 0.0020, loss_rpn_bbox: 0.0088, loss_cls: 0.0766, acc: 97.0898, loss_bbox: 0.1355, loss: 0.2229
+2020-09-28 21:45:17,068 - mmdet - INFO - Epoch [10][20/25]	lr: 2.500e-04, eta: 0:00:18, time: 0.307, data_time: 0.013, memory: 2229, loss_rpn_cls: 0.0007, loss_rpn_bbox: 0.0066, loss_cls: 0.0682, acc: 97.5586, loss_bbox: 0.1281, loss: 0.2036
+2020-09-28 21:45:23,691 - mmdet - INFO - Epoch [11][10/25]	lr: 2.500e-04, eta: 0:00:13, time: 0.509, data_time: 0.225, memory: 2229, loss_rpn_cls: 0.0023, loss_rpn_bbox: 0.0080, loss_cls: 0.0767, acc: 97.0020, loss_bbox: 0.1350, loss: 0.2219
+2020-09-28 21:45:26,609 - mmdet - INFO - Epoch [11][20/25]	lr: 2.500e-04, eta: 0:00:09, time: 0.291, data_time: 0.012, memory: 2229, loss_rpn_cls: 0.0012, loss_rpn_bbox: 0.0087, loss_cls: 0.0686, acc: 97.4512, loss_bbox: 0.1342, loss: 0.2127
+2020-09-28 21:45:33,417 - mmdet - INFO - Epoch [12][10/25]	lr: 2.500e-05, eta: 0:00:04, time: 0.522, data_time: 0.227, memory: 2229, loss_rpn_cls: 0.0010, loss_rpn_bbox: 0.0064, loss_cls: 0.0632, acc: 97.7246, loss_bbox: 0.1207, loss: 0.1914
+2020-09-28 21:45:36,596 - mmdet - INFO - Epoch [12][20/25]	lr: 2.500e-05, eta: 0:00:01, time: 0.318, data_time: 0.014, memory: 2229, loss_rpn_cls: 0.0019, loss_rpn_bbox: 0.0064, loss_cls: 0.0581, acc: 97.7246, loss_bbox: 0.0980, loss: 0.1644
+2020-09-28 21:45:38,159 - mmdet - INFO - Saving checkpoint at 12 epochs
+2020-09-28 21:45:41,997 - mmdet - INFO - 
++------------+-----+------+--------+-------+
+| class      | gts | dets | recall | ap    |
++------------+-----+------+--------+-------+
+| Car        | 62  | 200  | 0.919  | 0.813 |
+| Pedestrian | 13  | 113  | 0.846  | 0.724 |
+| Cyclist    | 7   | 106  | 0.571  | 0.026 |
++------------+-----+------+--------+-------+
+| mAP        |     |      |        | 0.521 |
++------------+-----+------+--------+-------+
+2020-09-28 21:45:41,998 - mmdet - INFO - Epoch(val) [12][25]	mAP: 0.5210
