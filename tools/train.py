@@ -19,15 +19,21 @@ from mmdet.utils import collect_env, get_root_logger
 
 
 def parse_args():
+    # argparse是python标准库里面用来处理 ** ** 命令行参数 ** ** 的库
+    # ArgumentParser（）方法参数须知：一般我们只选择用description
     parser = argparse.ArgumentParser(description='Train a detector')
     parser.add_argument('config', help='train config file path')
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument(
         '--resume-from', help='the checkpoint file to resume from')
+    # action 表示值赋予键的方式，这里用到的是bool类型
+    # 如果配置，值为True, store_false表示如果配置，值为False。
+    # python3 train.py --no-validate 不需要接具体的值
     parser.add_argument(
         '--no-validate',
         action='store_true',
         help='whether not to evaluate the checkpoint during training')
+    # 确保互斥组中只有一个参数在命令行中可用, --gpus和--gpu-ids只有一个可用
     group_gpus = parser.add_mutually_exclusive_group()
     group_gpus.add_argument(
         '--gpus',
@@ -148,9 +154,12 @@ def main():
     meta['seed'] = args.seed
     meta['exp_name'] = osp.basename(args.config)
 
+    # ---------------------------------------------------正是开始-----------------------------------------
+    # 1 model
     model = build_detector(
         cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)
 
+    # 2 dataset
     datasets = [build_dataset(cfg.data.train)]
     if len(cfg.workflow) == 2:
         val_dataset = copy.deepcopy(cfg.data.val)
@@ -164,6 +173,8 @@ def main():
             CLASSES=datasets[0].CLASSES)
     # add an attribute for visualization convenience
     model.CLASSES = datasets[0].CLASSES
+
+    # train
     train_detector(
         model,
         datasets,

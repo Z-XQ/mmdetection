@@ -67,6 +67,7 @@ class CustomDataset(Dataset):
         self.CLASSES = self.get_classes(classes)
 
         # join paths if data_root is specified
+        # 如果没有指定data_root，则ann_file就是完整路径
         if self.data_root is not None:
             if not osp.isabs(self.ann_file):
                 self.ann_file = osp.join(self.data_root, self.ann_file)

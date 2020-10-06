@@ -1,153 +1,199 @@
-<div align="center">
-  <img src="resources/mmdet-logo.png" width="600"/>
-</div>
+官方的README主要讲的是有些什么模型，模型的性能如何。这里介绍的是源码和如何定制我们自己的训练策略。
 
-**News**: We released the technical report on [ArXiv](https://arxiv.org/abs/1906.07155).
+# 1. 最重要的机制-注册机制
+注册机制，是预先把类注册到一个字典中，在任何需要的时候，实例化这个类即可，这样如果有新的功能，不需要修改旧有的代码，比如我有个新的
+数据集KittyDataset类，只需要注册，然后通过配置，从注册器里面找到对应的类，实例化这个类就可以用起来了。
+## Registry
+通过register_module方法，注册类。所有的类将会保存在Registry对象的属性self._module_dict中，key是类名或者指定的名字，value是类本身。
 
-Documentation: https://mmdetection.readthedocs.io/
+先把所有以修饰器方式@x.register_module()或者普通函数方式x.register_module(module=SomeClass)，注册完这些类，然后才会通过build_from_cfg
+建立对象。
+## build_from_cfg(cfg, registry, default_args=None)
+通过cfg字典里面具体的配置，从registry里面找到对应的预先注册好的类，并实例化这个类，返回类对象。default_args用来修改cfg里面的配置。
+cfg有个key是type，value是类名或者注册时指定的其他名字，比如cfg['type']='KittiTinyDataset', 
+则会从registry中找到对应的类KittiTinyDataset，然后实例化并返回这个类对象。
 
-## Introduction
+# 2. Dataset
+自定义数据集比较简单的有两种方式，一种是converting the data into the format of existing datasets like COCO, VOC, etc.
+一种是need to read annotations of each image and convert them into middle format MMDetection accept，下面介绍第二种方式
+## 2.1 继承CustomDataset
+自定义的Dataset需要继承CustomDataset类，然后复写方法load_annotations，该方法的作用是读取并解析标注信息，返回一个list, 该list格式是：
 
-MMDetection is an open source object detection toolbox based on PyTorch. It is
-a part of the OpenMMLab project developed by [Multimedia Laboratory, CUHK](http://mmlab.ie.cuhk.edu.hk/).
+    [
+        {
+            'filename': 'a.jpg',
+            'width': 1280,
+            'height': 720,
+            'ann': {
+                'bboxes': <np.ndarray> (n, 4) in (x1, y1, x2, y2) order.
+                'labels': <np.ndarray> (n, ),
+                'bboxes_ignore': <np.ndarray> (k, 4), (optional field)
+                'labels_ignore': <np.ndarray> (k, 4) (optional field)
+            }
+        },
+        ...
+    ]
 
-The master branch works with **PyTorch 1.3 to 1.6**.
-The old v1.x branch works with PyTorch 1.1 to 1.4, but v2.0 is strongly recommended for faster speed, higher performance, better design and more friendly usage.
-
-![demo image](resources/coco_test_12510.jpg)
-
-### Major features
-
-- **Modular Design**
-
-  We decompose the detection framework into different components and one can easily construct a customized object detection framework by combining different modules.
-
-- **Support of multiple frameworks out of box**
-
-  The toolbox directly supports popular and contemporary detection frameworks, *e.g.* Faster RCNN, Mask RCNN, RetinaNet, etc.
-
-- **High efficiency**
-
-  All basic bbox and mask operations run on GPUs. The training speed is faster than or comparable to other codebases, including [Detectron2](https://github.com/facebookresearch/detectron2), [maskrcnn-benchmark](https://github.com/facebookresearch/maskrcnn-benchmark) and [SimpleDet](https://github.com/TuSimple/simpledet).
-
-- **State of the art**
-
-  The toolbox stems from the codebase developed by the *MMDet* team, who won [COCO Detection Challenge](http://cocodataset.org/#detection-leaderboard) in 2018, and we keep pushing it forward.
-
-Apart from MMDetection, we also released a library [mmcv](https://github.com/open-mmlab/mmcv) for computer vision research, which is heavily depended on by this toolbox.
-
-## License
-
-This project is released under the [Apache 2.0 license](LICENSE).
-
-## Changelog
-
-v2.4.0 was released in 5/9/2020.
-Please refer to [changelog.md](docs/changelog.md) for details and release history.
-A comparison between v1.x and v2.0 codebases can be found in [compatibility.md](docs/compatibility.md).
-
-## Benchmark and model zoo
-
-Results and models are available in the [model zoo](docs/model_zoo.md).
-
-Supported backbones:
-- [x] ResNet
-- [x] ResNeXt
-- [x] VGG
-- [x] HRNet
-- [x] RegNet
-- [x] Res2Net
-
-Supported methods:
-- [x] [RPN](configs/rpn)
-- [x] [Fast R-CNN](configs/fast_rcnn)
-- [x] [Faster R-CNN](configs/faster_rcnn)
-- [x] [Mask R-CNN](configs/mask_rcnn)
-- [x] [Cascade R-CNN](configs/cascade_rcnn)
-- [x] [Cascade Mask R-CNN](configs/cascade_rcnn)
-- [x] [SSD](configs/ssd)
-- [x] [RetinaNet](configs/retinanet)
-- [x] [GHM](configs/ghm)
-- [x] [Mask Scoring R-CNN](configs/ms_rcnn)
-- [x] [Double-Head R-CNN](configs/double_heads)
-- [x] [Hybrid Task Cascade](configs/htc)
-- [x] [Libra R-CNN](configs/libra_rcnn)
-- [x] [Guided Anchoring](configs/guided_anchoring)
-- [x] [FCOS](configs/fcos)
-- [x] [RepPoints](configs/reppoints)
-- [x] [Foveabox](configs/foveabox)
-- [x] [FreeAnchor](configs/free_anchor)
-- [x] [NAS-FPN](configs/nas_fpn)
-- [x] [ATSS](configs/atss)
-- [x] [FSAF](configs/fsaf)
-- [x] [PAFPN](configs/pafpn)
-- [x] [Dynamic R-CNN](configs/dynamic_rcnn)
-- [x] [PointRend](configs/point_rend)
-- [x] [CARAFE](configs/carafe/README.md)
-- [x] [DCNv2](configs/dcn/README.md)
-- [x] [Group Normalization](configs/gn/README.md)
-- [x] [Weight Standardization](configs/gn+ws/README.md)
-- [x] [OHEM](configs/faster_rcnn/faster_rcnn_r50_fpn_ohem_1x_coco.py)
-- [x] [Soft-NMS](configs/faster_rcnn/faster_rcnn_r50_fpn_soft_nms_1x_coco.py)
-- [x] [Generalized Attention](configs/empirical_attention/README.md)
-- [x] [GCNet](configs/gcnet/README.md)
-- [x] [Mixed Precision (FP16) Training](configs/fp16/README.md)
-- [x] [InstaBoost](configs/instaboost/README.md)
-- [x] [GRoIE](configs/groie/README.md)
-- [x] [DetectoRS](configs/detectors/README.md)
-- [x] [Generalized Focal Loss](configs/gfl/README.md)
-- [x] [CornerNet](configs/cornernet/README.md)
-- [x] [Side-Aware Boundary Localization](configs/sabl/README.md)
-- [x] [YOLOv3](configs/yolo/README.md)
-- [x] [PAA](configs/paa/README.md)
-- [x] [YOLACT](configs/yolact/README.md)
-- [x] [CentripetalNet](configs/centripetalnet/README.md)
-
-Some other methods are also supported in [projects using MMDetection](./docs/projects.md).
-
-## Installation
-
-Please refer to [install.md](docs/install.md) for installation and dataset preparation.
-
-
-## Getting Started
-
-Please see [getting_started.md](docs/getting_started.md) for the basic usage of MMDetection.
-We provide [colab tutorial](demo/MMDet_Tutorial.ipynb) for beginners.
-There are also tutorials for [finetuning models](docs/tutorials/finetune.md), [adding new dataset](docs/tutorials/new_dataset.md), [designing data pipeline](docs/tutorials/data_pipeline.md), and [adding new modules](docs/tutorials/new_modules.md).
-
-For trouble shooting, please refer to [trouble_shooting.md](docs/trouble_shooting.md)
-
-## Contributing
-
-We appreciate all contributions to improve MMDetection. Please refer to [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the contributing guideline.
-
-## Acknowledgement
-
-MMDetection is an open source project that is contributed by researchers and engineers from various colleges and companies. We appreciate all the contributors who implement their methods or add new features, as well as users who give valuable feedbacks.
-We wish that the toolbox and benchmark could serve the growing research community by providing a flexible toolkit to reimplement existing methods and develop their own new detectors.
-
-
-## Citation
-
-If you use this toolbox or benchmark in your research, please cite this project.
-
+示例：
+```python
+    # -*- coding: utf-8 -*-
+    # @Time    : 2020/9/28 下午9:20
+    # @Author  : zxq
+    # @File    : kitti_tiny_dataset.py
+    # @Software: PyCharm
+    
+    import os.path as osp
+    
+    import mmcv
+    import numpy as np
+    
+    from mmdet.datasets.builder import DATASETS
+    from mmdet.datasets.custom import CustomDataset
+    
+    
+    @DATASETS.register_module()
+    class KittiTinyDataset(CustomDataset):
+        CLASSES = ('Car', 'Pedestrian', 'Cyclist')
+    
+        def load_annotations(self, ann_file):
+            cat2label = {k: i for i, k in enumerate(self.CLASSES)}
+            # load image list from file
+            image_list = mmcv.list_from_file(self.ann_file)  # 获取所有的图片名
+    
+            data_infos = []
+            # convert annotations to middle format
+            for image_id in image_list:  # 根据图片名，找到对应的标注文件，解析并获取标注信息
+                filename = f'{self.img_prefix}/{image_id}.jpeg'
+                image = mmcv.imread(filename)
+                height, width = image.shape[:2]
+    
+                data_info = dict(filename=f'{image_id}.jpeg', width=width, height=height)
+    
+                # load annotations
+                label_prefix = self.img_prefix.replace('image_2', 'label_2')
+                lines = mmcv.list_from_file(osp.join(label_prefix, f'{image_id}.txt'))  # 一张图片的多个标注信息
+    
+                content = [line.strip().split(' ') for line in lines]  # 每个item是一个标注
+                bbox_names = [x[0] for x in content]
+                bboxes = [[float(info) for info in x[4:8]] for x in content]  # x是一个标注信息， 索引[4, 8)是bbox， 把所有的bbox转成float
+    
+                gt_bboxes = []
+                gt_labels = []
+                gt_bboxes_ignore = []
+                gt_labels_ignore = []
+    
+                # filter 'DontCare'
+                for bbox_name, bbox in zip(bbox_names, bboxes):
+                    if bbox_name in cat2label:
+                        gt_labels.append(cat2label[bbox_name])  # 通过Pedestrian获取对应的label=1, 保存到gt_labels
+                        gt_bboxes.append(bbox)  # Pedestrian相对应的bbox，要保存到gt_bboxes
+                    else:
+                        gt_labels_ignore.append(-1)  # 如果文件里的标注类别不在声明的类别CLASSES里面，则忽略这些标注，并记录下来
+                        gt_bboxes_ignore.append(bbox)
+    
+                data_anno = dict(
+                    bboxes=np.array(gt_bboxes, dtype=np.float32).reshape(-1, 4),  # 目的是list转<np.ndarray> (n, 4)
+                    labels=np.array(gt_labels, dtype=np.long),  # 目的是list转<np.ndarray> (n, )
+                    bboxes_ignore=np.array(gt_bboxes_ignore,
+                                           dtype=np.float32).reshape(-1, 4),
+                    labels_ignore=np.array(gt_labels_ignore, dtype=np.long))
+    
+                data_info.update(ann=data_anno)  # 完善当前图片的其他信息
+                data_infos.append(data_info)  # 添加一张图片的完整信息
+    
+            return data_infos
+```     
+## 2.2 建立
+需要使用的时候，通过：dataset = build_dataset(cfg_dict)，实例化KittiTinyDataset，其中cfg_dict实例化所需要的参数，内容如下：
 ```
-@article{mmdetection,
-  title   = {{MMDetection}: Open MMLab Detection Toolbox and Benchmark},
-  author  = {Chen, Kai and Wang, Jiaqi and Pang, Jiangmiao and Cao, Yuhang and
-             Xiong, Yu and Li, Xiaoxiao and Sun, Shuyang and Feng, Wansen and
-             Liu, Ziwei and Xu, Jiarui and Zhang, Zheng and Cheng, Dazhi and
-             Zhu, Chenchen and Cheng, Tianheng and Zhao, Qijie and Li, Buyu and
-             Lu, Xin and Zhu, Rui and Wu, Yue and Dai, Jifeng and Wang, Jingdong
-             and Shi, Jianping and Ouyang, Wanli and Loy, Chen Change and Lin, Dahua},
-  journal= {arXiv preprint arXiv:1906.07155},
-  year={2019}
-}
+    train=dict(
+    type='KittiTinyDataset',
+    ann_file='train.txt',  # 如果没有指定data_root，则ann_file就是标注文件的完整路径，其中train.txt保存的是所有图片名
+    img_prefix='training/image_2',  # 如果没有指定data_root，则img_prefix就是原始图片的完整路径
+    pipeline=train_pipeline,
+    data_root='../data/kitti_tiny/'),
+    
+    也可以是（即把data_root去掉）：
+    train=dict(
+    type='KittiTinyDataset',
+    ann_file='../data/kitti_tiny/train.txt',  
+    img_prefix='../data/kitti_tiny/training/image_2',  
+    pipeline=train_pipeline),
 ```
+具体过程：
+build_dataset会调用build_from_cfg(cfg_dict, DATASETS, default_args)，其中DATASETS是
+注册器DATASETS = Registry('dataset'), 刚实例化时这个注册器的两个属性成员self._name = 'dataset'
+self._module_dict = dict()是为空，而KittiTinyDataset类会以修饰器的方式@DATASETS.register_module()
+注册到了DATASETS注册器中。build_from_cfg在前面的注册机制已经讲过了。
 
+# 3. model
+建立的过程和dataset是一样的，以FasterRCNN为例，通过
+model = build_detector(cfg.model, train_cfg=cfg.train_cfg, test_cfg=cfg.test_cfg)实例化model，
+其中，cfg.model是实例化FasterRCNN需要的参数, train_cfg是训练阶段用到的参数，test_cfg是测试时用到的参数。
+cfg.model内容：
+```python
+model = dict(
+    type='FasterRCNN',
+    pretrained=None,
+    backbone=...,
+    neck=...,
+    rpn_head=...,
+    roi_head=...)
+```
+build_detector会同样调用build_from_cfg(cfg, registry, default_args)，其中default_args包含了train_cfg和
+test_cfg，实例化FasterRCNN：
+```python
+class FasterRCNN(TwoStageDetector):
+    """Implementation of `Faster R-CNN <https://arxiv.org/abs/1506.01497>`_"""
 
-## Contact
+    def __init__(self,
+                 backbone,
+                 rpn_head,
+                 roi_head,
+                 train_cfg,
+                 test_cfg,
+                 neck=None,
+                 pretrained=None):
+        super(FasterRCNN, self).__init__(
+            backbone=backbone,
+            neck=neck,
+            rpn_head=rpn_head,
+            roi_head=roi_head,
+            train_cfg=train_cfg,
+            test_cfg=test_cfg,
+            pretrained=pretrained)
+```
+可以看到实例化FasterRCNN需要这7个参数，准确的说两阶段的检测器TwoStageDetector都需要这7个参数，
+其中5个参数通过cfg.model传递，另外2个，train_cfg和test_cfg需要单独传递。
 
-This repo is currently maintained by Kai Chen ([@hellock](http://github.com/hellock)), Yuhang Cao ([@yhcao6](https://github.com/yhcao6)), Wenwei Zhang ([@ZwwWayne](https://github.com/ZwwWayne)),
-Jiarui Xu ([@xvjiarui](https://github.com/xvjiarui)). Other core developers include Jiangmiao Pang ([@OceanPang](https://github.com/OceanPang)) and Jiaqi Wang ([@myownskyW7](https://github.com/myownskyW7)).
+FasterRCNN -> TwoStageDetector -> BaseDetector, BaseDetector是抽象类，子类TwoStageDetector必须要实现4个方法：
+```python
+@abstractmethod
+def extract_feat(self, imgs):
+    """Extract features from images."""
+    pass
+
+@abstractmethod
+def forward_train(self, imgs, img_metas, **kwargs):
+    """
+    Args:
+        img (list[Tensor]): List of tensors of shape (1, C, H, W).
+            Typically these should be mean centered and std scaled.
+        img_metas (list[dict]): List of image info dict where each dict
+            has: 'img_shape', 'scale_factor', 'flip', and may also contain
+            'filename', 'ori_shape', 'pad_shape', and 'img_norm_cfg'.
+            For details on the values of these keys, see
+            :class:`mmdet.datasets.pipelines.Collect`.
+        kwargs (keyword arguments): Specific to concrete implementation.
+    """
+    pass
+
+@abstractmethod
+def aug_test(self, imgs, img_metas, **kwargs):
+    """Test function with test time augmentation."""
+    pass
+
+@abstractmethod
+def simple_test(self, img, img_metas, **kwargs):
+    pass
+```
